@@ -10,7 +10,9 @@ import torch.nn as nn
 import torch
 import copy
 from torch import optim
+
 MODEL_PATH = 'model.pth'
+TARGET_MODEL_PATH = 'target_model.pth'
 
 device = torch.device("cuda")
 
@@ -45,7 +47,7 @@ target_update = 500
 batch_size = 256
 # Количество шагов среды
 #max_steps = 70000
-max_steps = 5000
+max_steps = 3000
 # Границы коэффициента exploration
 max_epsilon = 0.5
 min_epsilon = 0.1
@@ -157,6 +159,7 @@ def train():
         env.render()
         writer.add_scalar("Reward/Train", total_reward, step)
     torch.save(model.state_dict(),MODEL_PATH)
+    torch.save(target_model.state_dict(),TARGET_MODEL_PATH)
     return rewards_by_target_updates
 
 
