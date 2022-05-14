@@ -5,10 +5,12 @@ import numpy as np
 import gym
 from torch.utils.tensorboard import SummaryWriter
 
+import matplotlib.pyplot as plt
 import torch.nn as nn
 import torch
 import copy
 from torch import optim
+MODEL_PATH = 'model.pth'
 
 device = torch.device("cuda")
 
@@ -36,15 +38,18 @@ def create_new_model():
 
 
 # Количество обновлений model между обновлениями target model
-target_update = 1000
+#target_update = 1000
+target_update = 100
 # Размер одного батча, который на вход принимает модель
-batch_size = 128
+#batch_size = 512
+batch_size = 100
 # Количество шагов среды
-max_steps = 100001
+#max_steps = 70000
+max_steps = 500
 # Границы коэффициента exploration
 max_epsilon = 0.5
 min_epsilon = 0.1
-
+writer = SummaryWriter("logs") 
 
 class Memory:
     def __init__(self, capacity):
@@ -116,6 +121,7 @@ def train():
     rewards_by_target_updates = []
     state = env.reset()
     for step in range(max_steps):
+        print(step)
         # Делаем шаг в среде
         epsilon = max_epsilon - (max_epsilon - min_epsilon) * step / max_steps
         action = select_action(state, epsilon, model)
@@ -149,7 +155,14 @@ def train():
             state = env.reset()
             rewards_by_target_updates.append(total_reward)
         env.render()
+        writer.add_scalar("Reward/Train", total_reward, step)
+    torch.save(model.state_dict(),MODEL_PATH)
     return rewards_by_target_updates
 
 
-train()
+rewards_by_target_updates = train()
+print(rewards_by_target_updates)
+
+plt.plot([i for i in range(len(rewards_by_target_updates))],rewards_by_target_updates)
+plt.show()
+writer.close()
