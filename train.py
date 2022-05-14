@@ -32,20 +32,20 @@ def create_new_model():
     target_model.to(device)
 
     # Сразу зададим оптимизатор, с помощью которого будем обновлять веса модели
-    optimizer = optim.Adam(model.parameters(), lr=0.00003)
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
 
     return model, target_model, optimizer
 
 
 # Количество обновлений model между обновлениями target model
 #target_update = 1000
-target_update = 100
+target_update = 500
 # Размер одного батча, который на вход принимает модель
 #batch_size = 512
-batch_size = 100
+batch_size = 256
 # Количество шагов среды
 #max_steps = 70000
-max_steps = 500
+max_steps = 5000
 # Границы коэффициента exploration
 max_epsilon = 0.5
 min_epsilon = 0.1
