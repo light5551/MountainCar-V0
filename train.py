@@ -9,12 +9,13 @@ from torch import optim
 from torch.utils.tensorboard import SummaryWriter
 
 from constants import MODEL_PATH, TARGET_MODEL_PATH, TENSORBOARD_LOG_PATH
+from env import get_env
+from joystick import update_joystick
 from model import get_model
-
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-env = gym.make("MountainCar-v0")
+env = get_env()
 
 
 def create_new_model():
@@ -94,7 +95,7 @@ def fit(batch, model, target_model, optimizer):
 
     # Очищаем текущие градиенты внутри сети
     optimizer.zero_grad()
-    # Применяем обратное распространение  ошибки
+    # Применяем обратное распространение ошибки
     loss.backward()
     # Ограничиваем значения градиента. Необходимо, чтобы обновления не были слишком большими
     for param in model.parameters():
@@ -103,23 +104,36 @@ def fit(batch, model, target_model, optimizer):
     optimizer.step()
 
 
-def select_action(state, epsilon, model):
+def condition_joystick(step, epoch) -> bool:
+    if epoch > 5:
+        return False
+    return True
+
+
+def select_action(state, epsilon, model, joystick=False):
+    if joystick:
+        return update_joystick()
     if random.random() < epsilon:
         return random.randint(0, 2)
     return model(torch.tensor(state).to(device).float().unsqueeze(0))[0].max(0)[1].view(1, 1).item()
 
 
-def train():
+def train(joystick=False):
     # Создаем модель и буфер
     memory = Memory(5000)
     model, target_model, optimizer = create_new_model()
     rewards_by_target_updates = []
     state = env.reset()
+    env.render()
     for step in range(max_steps):
-        print(step)
         # Делаем шаг в среде
         epsilon = max_epsilon - (max_epsilon - min_epsilon) * step / max_steps
-        action = select_action(state, epsilon, model)
+        if joystick:
+            action = select_action(state, epsilon, model,
+                                   condition_joystick(step, env.count))
+        else:
+            action = select_action(state, epsilon, model,
+                                   False)
         new_state, reward, done, _ = env.step(action)
 
         # Запоминаем опыт и, если нужно, перезапускаем среду
@@ -156,9 +170,13 @@ def train():
     return rewards_by_target_updates
 
 
-rewards_by_target_updates = train()
-print(rewards_by_target_updates)
+def show(rewards):
+    plt.plot([i for i in range(len(rewards))], rewards)
+    plt.show()
 
-plt.plot([i for i in range(len(rewards_by_target_updates))], rewards_by_target_updates)
-plt.show()
-writer.close()
+
+def start(args):
+    rewards_by_target_updates = train(args.joystick)
+    show(rewards_by_target_updates)
+    writer.close()
+
