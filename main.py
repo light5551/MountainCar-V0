@@ -1,13 +1,13 @@
 import gym
 import numpy as np
 import pygame
+
 env = gym.make("MountainCar-v0")
 env.action_space.seed(42)
 
-
-
 observation, info = env.reset(seed=42, return_info=True)
-stack = [1] # accelerate
+stack = [1]  # accelerate
+
 
 def update():
     events = pygame.event.get()
@@ -23,7 +23,6 @@ def update():
                 stack.remove(0)
             if event.key == pygame.K_RIGHT:
                 stack.remove(2)
-
 
     action = stack[-1]
     print(action)
