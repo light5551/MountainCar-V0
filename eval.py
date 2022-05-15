@@ -1,15 +1,14 @@
 import gym
 import torch
 
-from constants import MODEL_PATH
+from constants import TARGET_MODEL_PATH
 from model import get_model
-
 
 episode_length = 500
 env = gym.make("MountainCar-v0")
 env = env.unwrapped
 model = get_model()
-model.load_state_dict(torch.load(MODEL_PATH))
+model.load_state_dict(torch.load(TARGET_MODEL_PATH))
 state = env.reset()  # Reset environment
 episode_reward_sum = 0  # Initialize the total reward of episode corresponding to this cycle
 for i in range(episode_length):  # Start an episode (each cycle represents a step)
