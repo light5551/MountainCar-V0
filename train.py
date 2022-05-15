@@ -39,7 +39,7 @@ target_update = 500
 batch_size = 256
 # Количество шагов среды
 # max_steps = 70000
-max_steps = 3000
+max_steps = 5000
 # Границы коэффициента exploration
 max_epsilon = 0.5
 min_epsilon = 0.1
@@ -147,7 +147,7 @@ def train(joystick=False):
         # Градиентный спуск
         if step > batch_size:
             fit(memory.sample(batch_size), model, target_model, optimizer)
-            freeze_unchanged(model, target_model)
+            freeze_unchanged(model, target_model, step, target_update)
 
         if step % target_update == 0:
             target_model = copy.deepcopy(model)
