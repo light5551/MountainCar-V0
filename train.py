@@ -11,7 +11,7 @@ from torch.utils.tensorboard import SummaryWriter
 from constants import MODEL_PATH, TARGET_MODEL_PATH, TENSORBOARD_LOG_PATH
 from env import get_env
 from joystick import update_joystick
-from model import get_model
+from model import get_model, freeze_unchanged
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -148,6 +148,7 @@ def train(joystick=False):
         # Градиентный спуск
         if step > batch_size:
             fit(memory.sample(batch_size), model, target_model, optimizer)
+            freeze_unchanged(model, target_model)
 
         if step % target_update == 0:
             target_model = copy.deepcopy(model)
