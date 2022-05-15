@@ -1,7 +1,6 @@
 import copy
 import random
 
-import gym
 import matplotlib.pyplot as plt
 import torch
 import torch.nn.functional as F
