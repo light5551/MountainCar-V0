@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import gym
 
+from model import get_model
 
 MODEL_PATH = 'model.pth'
 TARGET_MODEL_PATH = 'target_model.pth'
@@ -9,13 +10,7 @@ TARGET_MODEL_PATH = 'target_model.pth'
 episode_length = 500
 env = gym.make("MountainCar-v0")
 env = env.unwrapped
-model = nn.Sequential(
-    nn.Linear(2, 32),
-    nn.ReLU(),
-    nn.Linear(32, 32),
-    nn.ReLU(),
-    nn.Linear(32, 3)
-)
+model = get_model()
 model.load_state_dict(torch.load(MODEL_PATH))
 state = env.reset()  # Reset environment
 episode_reward_sum = 0  # Initialize the total reward of episode corresponding to this cycle

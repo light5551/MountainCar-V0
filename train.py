@@ -1,15 +1,14 @@
+import copy
 import random
-import torch.nn.functional as F
-import torch.nn as nn
-import numpy as np
+
 import gym
+import matplotlib.pyplot as plt
+import torch
+import torch.nn.functional as F
+from torch import optim
 from torch.utils.tensorboard import SummaryWriter
 
-import matplotlib.pyplot as plt
-import torch.nn as nn
-import torch
-import copy
-from torch import optim
+from model import get_model
 
 MODEL_PATH = 'model.pth'
 TARGET_MODEL_PATH = 'target_model.pth'
@@ -20,13 +19,7 @@ env = gym.make("MountainCar-v0")
 
 
 def create_new_model():
-    model = nn.Sequential(
-        nn.Linear(2, 32),
-        nn.ReLU(),
-        nn.Linear(32, 32),
-        nn.ReLU(),
-        nn.Linear(32, 3)
-    )
+    model = get_model()
     target_model = copy.deepcopy(model)
 
     # Загружаем модель на устройство, определенное в самом начале (GPU или CPU)

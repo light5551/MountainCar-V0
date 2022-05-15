@@ -1,5 +1,4 @@
 import gym
-import numpy as np
 import pygame
 
 env = gym.make("MountainCar-v0")
