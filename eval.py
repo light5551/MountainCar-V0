@@ -1,10 +1,9 @@
 import gym
 import torch
 
+from constants import MODEL_PATH
 from model import get_model
 
-MODEL_PATH = 'model.pth'
-TARGET_MODEL_PATH = 'target_model.pth'
 
 episode_length = 500
 env = gym.make("MountainCar-v0")

@@ -1,29 +1,12 @@
-import gym
-import pygame
-
-from joystick import update_joystick
-
-env = gym.make("MountainCar-v0")
-env.action_space.seed(42)
-
-observation, info = env.reset(seed=42, return_info=True)
-stack = [1]  # accelerate
+import argparse
 
 
-def update():
+parser = argparse.ArgumentParser()
 
-    action = update_joystick()
-    print(action)
-    observation, reward, done, info = env.step(action)
-    env.render()
-    if done:
-        observation, info = env.reset(return_info=True)
+parser.add_argument(
+    "-j", "--joystick", default=False, action="store_true", help="On/Off joystick mode")
 
 
-env.render()
-for _ in range(1000):
-    update()
-
-print('quit')
-
-env.close()
+if __name__ == '__main__':
+    args = parser.parse_args()
+    print(args.joystick)

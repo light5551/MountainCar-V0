@@ -8,12 +8,11 @@ import torch.nn.functional as F
 from torch import optim
 from torch.utils.tensorboard import SummaryWriter
 
+from constants import MODEL_PATH, TARGET_MODEL_PATH, TENSORBOARD_LOG_PATH
 from model import get_model
 
-MODEL_PATH = 'model.pth'
-TARGET_MODEL_PATH = 'target_model.pth'
 
-device = torch.device("cuda")
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 env = gym.make("MountainCar-v0")
 
@@ -44,7 +43,7 @@ max_steps = 3000
 # Границы коэффициента exploration
 max_epsilon = 0.5
 min_epsilon = 0.1
-writer = SummaryWriter("logs")
+writer = SummaryWriter(TENSORBOARD_LOG_PATH)
 
 
 class Memory:
