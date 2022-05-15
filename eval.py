@@ -1,6 +1,5 @@
-import torch
-import torch.nn as nn
 import gym
+import torch
 
 from model import get_model
 
